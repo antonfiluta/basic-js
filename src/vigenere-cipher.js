@@ -20,14 +20,61 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(bool) {
+    this.bool = bool;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-  }
+
+  encrypt(message, key) {
+    if (!message || !key) throw new Error("Incorrect arguments!");
+    
+    key = key.repeat(20).split('')
+    .map((item, index, arr) => {
+      if (message[index] === ' ') arr.splice(index, 0, ' ');
+      return item;
+    }).join('');
+  
+    message = message.split('')
+    .map((item, index, arr) => {
+      let char1 = item.toLowerCase().charCodeAt(0), char2 = key.toLowerCase().charCodeAt(index) - 97;
+      if (char1 > 96 && char1 < 123) {
+        if (char1 + char2 < 123) {
+          return String.fromCharCode(char1 + char2).toUpperCase();
+        } else {
+          return String.fromCharCode(char1 + char2 - 26).toUpperCase();
+        }
+      } else {
+        return item;
+      }
+    }).join('');
+
+    return this.bool === false ? message.split('').reverse().join('')  : message;
+}
+
+decrypt(message, key) {
+  if (!message || !key) throw new Error("Incorrect arguments!");
+
+  key = key.repeat(20).split('')
+  .map((item, index, arr) => {
+    if (message[index] === ' ') arr.splice(index, 0, ' ');
+    return item;
+  }).join('');
+
+  message = message.split('')
+  .map((item, index, arr) => {
+    let char1 = item.toLowerCase().charCodeAt(0), char2 = key.toLowerCase().charCodeAt(index) - 97;
+    if (char1 > 96 && char1 < 123) {
+      if (char1 - char2 > 96) {
+        return String.fromCharCode(char1 - char2).toUpperCase();
+      } else {
+        return String.fromCharCode(char1 - char2 + 26).toUpperCase();
+      }
+    } else {
+      return item;
+    }
+  }).join('');
+
+  return this.bool === false ? message.split('').reverse().join('') : message;
+}
 }
 
 module.exports = {
